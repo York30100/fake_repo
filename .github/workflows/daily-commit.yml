@@ -1,0 +1,35 @@
+name: Nightly Commit at 10:30 PM IST
+
+on:
+  schedule:
+    - cron: '0 17 * * *'  # UTC time (10:30 PM IST = 17:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  nightly-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Git Config
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Create Daily File
+        run: |
+          DATE=$(date '+%Y-%m-%d')
+          echo "## $DATE" >> "$DATE.md"
+          echo "Today I continued learning." >> "$DATE.md"
+          echo "" >> "$DATE.md"
+
+      - name: Git Add & Commit
+        run: |
+          git add .
+          git commit -m "Update diary for $(date '+%Y-%m-%d')"
+
+      - name: Push to Main
+        run: |
+          git push origin main
